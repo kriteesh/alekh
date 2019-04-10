@@ -1,10 +1,12 @@
- const canvas = document.querySelector('canvas');
-    let w = canvas.width = document.getElementsByClassName('simulation')[0].clientWidth;
-    let h = canvas.height = document.getElementsByClassName('simulation')[0].clientHeight;
-    let ctx = canvas.getContext('2d');
-    let showNumbers = true;
-    let origin = {x:14,y:11};
-    let scale = {x:1,y:1};
+const canvas = document.querySelector('canvas');
+let w = canvas.width = document.getElementsByClassName('simulation')[0].clientWidth;
+let h = canvas.height = document.getElementsByClassName('simulation')[0].clientHeight;
+
+
+let ctx = canvas.getContext('2d');
+let showNumbers = true;
+let origin = {x:14,y:11};
+let scale = {x:1,y:1};
 
     let x_o = origin.x*w/30;
     let y_o = origin.y*h/20;
@@ -63,54 +65,12 @@
 
     }
 
-    let dataPlot = (arr) =>{
-        arr.map((x,i)=>{
-            ctx.fillStyle = "#ccc";
-            ctx.beginPath();
-            ctx.arc(x_o + x[0]*scaleX,y_o - x[1]*scaleY,3,0,2*Math.PI);
-            ctx.fill();
-        })
-    }
-
-    let curve_plot = (y) => (x_in) => (x_fin) => (dx) => {
-		if(x_in >= x_fin)
-		{
-		ctx.arc(x_o + x_in*scaleX, y_o - y(x_in)*scaleY,1,0,2*Math.PI);
-		ctx.fill();
-		}
-		else
-		{
-		ctx.beginPath();
-		ctx.moveTo(x_o + x_in*scaleX, y_o - y(x_in)*scaleY);
-		ctx.lineTo(x_o + x_in*scaleX + dx*scaleX, y_o - y(x_in + dx)*scaleY);
-		ctx.stroke();
-		return curve_plot(y)(x_in + dx)(x_fin)(dx);
-		}
-	}
-
-    let parametric_curve = (y) => (x) => (t_in) => (t_fin) => (dt) => 
-		{
-		if(t_in >= t_fin)
-		{
-		ctx.arc(x_o + x(t_in)*scaleX, y_o - y(t_in)*scaleY,2,0,2*Math.PI);
-		ctx.fill();
-		}
-		else
-		{
-		ctx.beginPath();
-		ctx.moveTo(x_o + x(t_in)*scaleX, y_o - y(t_in)*scaleY);
-		ctx.lineTo(x_o + x(t_in + dt)*scaleX, y_o - y(t_in + dt)*scaleY);
-		ctx.stroke();
-		
-		return parametric_curve(y)(x)(t_in + dt)(t_fin)(dt);
-		}
-	}
-
     // background();
     
     let program = {
         title : "Normal Distribution",
         defaultInfo : "This is the most general curve of all",
+        
         parameters : [
             {
                 name : "x-scale",
@@ -142,17 +102,19 @@
                 default : 2,
                 info : "changing the kurt is the thing"
             }
-        ] 
+        ],
+        curve : () => {curve_plot(x=>Math.sin(x))(-12*Math.PI)(12*Math.PI)(0.01);}  
     }
+
 
     let kurt = 2; 
 
     grid(scale)(origin);
-
+    program.curve();
     // curve_plot(x=>1/sigma * 1/Math.sqrt(2*Math.PI)*Math.exp(-(x-mean)*(x-mean)/(kurt*sigma*sigma)))(-12*Math.PI)(12*Math.PI)(0.01);
-    curve_plot(x=>Math.sin(x))(-12*Math.PI)(12*Math.PI)(0.01);
-    curve_plot(x=>Math.sinh(x))(-12*Math.PI)(12*Math.PI)(0.01);
-    curve_plot(x=>Math.asin(x))(-12*Math.PI)(12*Math.PI)(0.01);
+    // curve_plot(x=>Math.sin(x))(-12*Math.PI)(12*Math.PI)(0.01);
+    // curve_plot(x=>Math.sinh(x))(-12*Math.PI)(12*Math.PI)(0.01);
+    // curve_plot(x=>Math.asin(x))(-12*Math.PI)(12*Math.PI)(0.01);
     // let data = new Array(48).fill(1);
     // data = data.map((x,i)=>[24-i,(24-i)*(24-i)]);
     // dataPlot(data);
@@ -242,7 +204,9 @@
         document.getElementsByClassName('parameterTable')[0].appendChild(block);
     });
 
-   
+
+    
+
 
     // let update =(val)=>{
     //     label[val].innerText = "Scale =" + this.value;
